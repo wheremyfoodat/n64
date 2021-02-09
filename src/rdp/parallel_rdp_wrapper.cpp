@@ -376,8 +376,8 @@ void update_screen_parallel_rdp_no_game() {
     update_screen(static_cast<Util::IntrusivePtr<Image>>(nullptr));
 }
 
-#define FROM_RDRAM(system, address) word_from_byte_array(system->mem.rdram, address)
-#define FROM_DMEM(system, address) word_from_byte_array(system->mem.sp_dmem, address)
+#define FROM_RDRAM(system, address) word_from_byte_array(system->mem.rdram, WORD_ADDRESS(address))
+#define FROM_DMEM(system, address) word_from_byte_array(system->rsp.sp_dmem, address)
 
 static const int command_lengths[64] = {
         2, 2, 2, 2, 2, 2, 2, 2, 8, 12, 24, 28, 24, 28, 40, 44,
@@ -416,7 +416,7 @@ void process_commands_parallel_rdp(n64_system_t* system) {
     // because commands have variable lengths
     if (dpc->status.xbus_dmem_dma) {
         for (int i = 0; i < display_list_length; i += 4) {
-            word command_word = FROM_DMEM(system, (current + i) & 0xFF8);
+            word command_word = FROM_DMEM(system, (current + i));
             parallel_rdp_command_buffer[last_run_unprocessed_words + (i >> 2)] = command_word;
         }
     } else {

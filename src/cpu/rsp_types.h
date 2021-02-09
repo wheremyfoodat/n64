@@ -11,6 +11,9 @@
 
 #define vecr __m128i
 
+#define SP_DMEM_SIZE 0x1000
+#define SP_IMEM_SIZE 0x1000
+
 typedef union vu_reg {
     // Used by instructions
     byte bytes[16];
@@ -142,23 +145,11 @@ typedef struct rsp {
 
     bool semaphore_held;
 
-    byte (*read_byte)(word);
-    void (*write_byte)(word, byte);
-
-    byte (*read_physical_byte)(word);
-    void (*write_physical_byte)(word, byte);
-
-    half (*read_half)(word);
-    void (*write_half)(word, half);
-
-    word (*read_word)(word);
-    void (*write_word)(word, word);
+    byte sp_dmem[SP_DMEM_SIZE];
+    byte sp_imem[SP_IMEM_SIZE];
 
     word (*read_physical_word)(word);
     void (*write_physical_word)(word, word);
-
-    //dword (*read_dword)(word);
-    //void (*write_dword)(word, dword);
 } rsp_t;
 
 INLINE void set_rsp_pc(rsp_t* rsp, half pc) {
