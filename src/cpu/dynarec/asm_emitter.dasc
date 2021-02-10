@@ -85,7 +85,7 @@ INLINE void take_branch(dasm_State** Dst, mips_instruction_t instr, word address
 void check_exception(dasm_State** Dst, word block_length) {
     // If an exception was triggered, end the block.
     // otherwise, don't end the block.
-    | movzx eax, cpu_state->exception
+    | movzx eax, byte cpu_state->exception
     // if (cpu_state->exception) {
     | test eax, eax
     | je >1
@@ -988,7 +988,7 @@ void end_block(dasm_State** Dst, int block_length) {
 }
 
 void post_branch_likely(dasm_State** Dst, r4300i_t* compile_time_cpu, int block_length) {
-    | movzx eax, cpu_state->branch
+    | movzx eax, byte cpu_state->branch
     | test eax, eax // if (branch == true)
     | jne >1
     // If the branch WAS taken, end the block.
