@@ -85,13 +85,13 @@ INLINE void take_branch(dasm_State** Dst, mips_instruction_t instr, word address
 void check_exception(dasm_State** Dst, word block_length) {
     // If an exception was triggered, end the block.
     // otherwise, don't end the block.
-    | mov al, cpu_state->exception
+    | movzx eax, cpu_state->exception
     // if (cpu_state->exception) {
-    | test al, al // cmp al, 0
+    | test eax, eax
     | je >1
 
     // cpu_state->exception = false
-    | xor eax, eax // mov eax, 0
+    | xor eax, eax // al = 0
     | mov cpu_state->exception, al
 
     // return block_length
@@ -959,7 +959,7 @@ void advance_pc(r4300i_t* compile_time_cpu, dasm_State** Dst) {
     static_assert(sizeof(compile_time_cpu->next_pc) == 8, "Next PC must be 64 bits for this to work (using RAX)");
 
     // cpu->branch = false;
-    | xor eax, eax // mov eax, 0
+    | xor eax, eax // al = 0
     | mov cpu_state->branch, al
 
     // cpu->prev_pc = cpu->pc;
@@ -977,7 +977,7 @@ void advance_pc(r4300i_t* compile_time_cpu, dasm_State** Dst) {
 
 void clear_branch_flag(dasm_State** Dst) {
     // cpu->branch = false;
-    | xor eax, eax // mov eax, 0
+    | xor eax, eax
     | mov cpu_state->branch, al
 }
 
@@ -988,8 +988,8 @@ void end_block(dasm_State** Dst, int block_length) {
 }
 
 void post_branch_likely(dasm_State** Dst, r4300i_t* compile_time_cpu, int block_length) {
-    | mov al, cpu_state->branch
-    | test al, al // cmp al, 0, if (branch == true)
+    | movzx eax, cpu_state->branch
+    | test eax, eax // if (branch == true)
     | jne >1
     // If the branch WAS taken, end the block.
     end_block(Dst, block_length);
